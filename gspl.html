@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSPL 2026 — Annual Cricket Tournament</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pitch:#1E3E6B;
+    --pitch-dark:#122A4D;
+    --cherry:#E8641B;
+    --board:#0C1524;
+    --chalk:#F3F5FA;
+    --brass:#F5A83C;
+    --ink:#18202C;
+    --line:rgba(24,32,44,.14);
+    --radius:10px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'IBM Plex Sans',sans-serif;color:var(--ink);background:var(--chalk);line-height:1.6}
+  h1,h2,h3{font-family:'Archivo',sans-serif;line-height:1.1}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+  /* ---------- NAV ---------- */
+  nav{position:sticky;top:0;z-index:50;background:var(--pitch-dark);color:var(--chalk);
+      display:flex;align-items:center;justify-content:space-between;padding:.7rem 5vw;flex-wrap:wrap;gap:.5rem}
+  nav .logo{font-family:'Archivo';font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-size:1.05rem}
+  nav .logo span{color:var(--brass)}
+  nav ul{display:flex;gap:1.3rem;list-style:none;flex-wrap:wrap}
+  nav a{text-decoration:none;font-size:.9rem;opacity:.85}
+  nav a:hover{opacity:1;color:var(--brass)}
+  nav .cta{background:var(--cherry);padding:.45rem 1rem;border-radius:6px;opacity:1;font-weight:600}
+  nav .cta:hover{background:#C2530F;color:var(--chalk)}
+
+  /* ---------- HERO ---------- */
+  header{background:
+      radial-gradient(ellipse 120% 70% at 50% 110%, rgba(245,168,60,.28), transparent 60%),
+      repeating-linear-gradient(90deg, var(--pitch) 0 90px, #24477C 90px 180px);
+    color:var(--chalk);text-align:center;padding:6rem 5vw 5rem;position:relative;overflow:hidden}
+  header .eyebrow{font-family:'IBM Plex Mono';letter-spacing:.25em;text-transform:uppercase;font-size:.8rem;color:var(--brass)}
+  header h1{font-size:clamp(2.8rem,10vw,6rem);font-weight:900;text-transform:uppercase;letter-spacing:.02em;margin:.6rem 0 .4rem}
+  header .sub{font-size:1.1rem;max-width:36rem;margin:0 auto 2rem;opacity:.9}
+  .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:.8rem 1.8rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:1rem;border:2px solid transparent;cursor:pointer}
+  .btn-red{background:var(--cherry);color:#fff}
+  .btn-red:hover{background:#C2530F}
+  .btn-ghost{border-color:var(--chalk);color:var(--chalk)}
+  .btn-ghost:hover{background:rgba(255,255,255,.12)}
+  .countdown{display:flex;gap:.8rem;justify-content:center;margin-top:2.5rem;font-family:'IBM Plex Mono';flex-wrap:wrap}
+  .countdown div{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:.6rem .9rem;min-width:74px}
+  .countdown b{display:block;font-size:1.6rem}
+  .countdown small{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;opacity:.75}
+
+  /* ---------- SCOREBOARD ---------- */
+  .scoreboard{background:var(--board);color:#EDE9DC;padding:2.5rem 5vw}
+  .scoreboard h2{color:var(--brass);font-family:'IBM Plex Mono';font-size:.85rem;letter-spacing:.3em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem}
+  .live-dot{width:9px;height:9px;border-radius:50%;background:var(--cherry);animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .board-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1rem}
+  .match-card{border:1px solid #2c352e;border-radius:var(--radius);padding:1.1rem 1.2rem;background:#151b16}
+  .match-card .meta{font-family:'IBM Plex Mono';font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#8fa393;margin-bottom:.7rem;display:flex;justify-content:space-between}
+  .match-card .status-live{color:var(--cherry);font-weight:700}
+  .team-row{display:flex;justify-content:space-between;align-items:baseline;padding:.3rem 0;font-weight:600}
+  .team-row .score{font-family:'IBM Plex Mono';font-weight:700;font-size:1.15rem;color:var(--brass)}
+  .match-card .note{font-size:.8rem;color:#8fa393;margin-top:.6rem;border-top:1px dashed #2c352e;padding-top:.6rem}
+
+  /* ---------- SHARED SECTION ---------- */
+  section{padding:4.5rem 5vw;max-width:1150px;margin:0 auto}
+  .sec-head{margin-bottom:2rem}
+  .sec-head .eyebrow{font-family:'IBM Plex Mono';font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--cherry)}
+  .sec-head h2{font-size:clamp(1.7rem,4vw,2.5rem);font-weight:900;text-transform:uppercase}
+
+  /* ---------- FIXTURES ---------- */
+  .fixture-tabs{display:flex;gap:.5rem;margin-bottom:1.4rem;flex-wrap:wrap}
+  .fixture-tabs button{font-family:'IBM Plex Mono';font-size:.8rem;letter-spacing:.08em;padding:.5rem 1.1rem;border-radius:999px;border:1.5px solid var(--pitch);background:transparent;color:var(--pitch);cursor:pointer;font-weight:700}
+  .fixture-tabs button.active{background:var(--pitch);color:var(--chalk)}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  th,td{padding:.8rem 1rem;text-align:left;border-bottom:1px solid var(--line);font-size:.92rem}
+  th{background:var(--pitch);color:var(--chalk);font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;font-weight:700}
+  tr:last-child td{border-bottom:none}
+  td.num{font-family:'IBM Plex Mono';font-weight:700}
+  .table-wrap{overflow-x:auto;border-radius:var(--radius)}
+  .day{display:none}
+  .day.active{display:block}
+  .final-row{background:rgba(245,168,60,.15)}
+
+  /* ---------- STANDINGS ---------- */
+  .standings td:first-child{font-weight:700}
+  .qual{border-left:4px solid var(--brass)}
+
+  /* ---------- TEAMS ---------- */
+  .teams-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+  .team-card{background:#fff;border-radius:var(--radius);padding:1.3rem;box-shadow:0 1px 3px rgba(0,0,0,.08);border-top:4px solid var(--pitch)}
+  .team-card.tbc{border-top-color:#aaa;opacity:.75;border-style:solid}
+  .team-card h3{font-size:1.05rem;text-transform:uppercase;letter-spacing:.03em}
+  .team-card p{font-size:.85rem;color:#555;margin-top:.3rem}
+  .team-card .cap{font-family:'IBM Plex Mono';font-size:.72rem;color:var(--cherry);letter-spacing:.1em;text-transform:uppercase;margin-top:.6rem}
+
+  /* ---------- AWARDS ---------- */
+  .awards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+  .award{background:#fff;border-radius:var(--radius);padding:1.5rem 1.3rem;box-shadow:0 1px 3px rgba(0,0,0,.08);text-align:center;border-bottom:4px solid var(--brass)}
+  .award .icon{font-size:2rem;line-height:1;margin-bottom:.6rem}
+  .award h3{font-size:.95rem;text-transform:uppercase;letter-spacing:.06em}
+  .award p{font-size:.83rem;color:#555;margin-top:.4rem}
+
+  /* ---------- GALLERY ---------- */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem}
+  .shot{aspect-ratio:4/3;border-radius:var(--radius);display:flex;align-items:end;padding:.8rem;color:#fff;font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+    background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),var(--pitch);
+    background-size:cover;background-position:center}
+  .shot.photo{background-image:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),var(--photo)!important}
+  .shot:nth-child(2){background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),#2E5A96}
+  .shot:nth-child(3){background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),var(--cherry)}
+  .shot:nth-child(4){background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),#3A424F}
+  .shot:nth-child(5){background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),var(--brass)}
+  .shot:nth-child(6){background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),#122A4D}
+  .gallery-note{font-size:.85rem;color:#666;margin-top:.8rem}
+
+  /* ---------- RULES ---------- */
+  .rules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+  .rule{background:#fff;border-radius:var(--radius);padding:1.2rem 1.3rem;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .rule h3{font-size:.95rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pitch);margin-bottom:.4rem}
+  .rule p{font-size:.88rem;color:#444}
+
+  /* ---------- REGISTRATION ---------- */
+  #register{background:var(--pitch);border-radius:16px;color:var(--chalk);max-width:1150px;margin:0 auto;padding:3.5rem 5vw}
+  #register .sec-head .eyebrow{color:var(--brass)}
+  #register h2{color:var(--chalk)}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:720px}
+  .field{display:flex;flex-direction:column;gap:.3rem}
+  .field.full{grid-column:1/-1}
+  label{font-size:.8rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  input,select,textarea{padding:.7rem .8rem;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.95);font-family:inherit;font-size:.95rem;color:var(--ink)}
+  textarea{resize:vertical;min-height:90px}
+  form .btn-red{grid-column:1/-1;justify-self:start;border:none}
+  .form-msg{grid-column:1/-1;font-weight:600;display:none;padding:.8rem 1rem;border-radius:6px}
+  .form-msg.ok{display:block;background:rgba(245,168,60,.25);border:1px solid var(--brass)}
+  .form-msg.err{display:block;background:rgba(232,100,27,.3);border:1px solid var(--cherry)}
+  .reg-note{font-size:.85rem;opacity:.85;margin-top:1.2rem}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--board);color:#CBD5E4;padding:3.5rem 5vw 2rem;margin-top:4.5rem}
+  .foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;max-width:1150px;margin:0 auto}
+  footer h3{color:var(--chalk);font-size:1rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem}
+  footer p, footer li{font-size:.88rem;line-height:1.8}
+  footer ul{list-style:none}
+  footer a{color:var(--brass);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  .copyright{text-align:center;margin-top:2.5rem;font-family:'IBM Plex Mono';font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;opacity:.5}
+
+  @media (max-width:640px){
+    form{grid-template-columns:1fr}
+    nav ul{gap:.9rem;font-size:.85rem}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">GSPL <span>2026</span></div>
+  <ul>
+    <li><a href="#teams">Teams</a></li>
+    <li><a href="#awards">Awards</a></li>
+    <li><a href="#rules">Rules</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+  </ul>
+</nav>
+
+<header>
+  <p class="eyebrow">Annual Cricket Tournament · 6 Teams · 4-a-Side</p>
+  <h1>GSPL 2026</h1>
+  <p class="sub">Six teams, one league, one final. Every side plays each other once — <strong>4-over innings</strong> in the league, a <strong>5-over showdown</strong> in the final. Top two make it. One lifts the trophy.</p>
+  <div class="hero-btns">
+    <a class="btn btn-red" href="#teams">Meet the teams</a>
+    <a class="btn btn-ghost" href="#rules">Tournament rules</a>
+  </div>
+  <div class="countdown" id="countdown" aria-label="Countdown to tournament start">
+    <div><b id="cd-d">--</b><small>Days</small></div>
+    <div><b id="cd-h">--</b><small>Hours</small></div>
+    <div><b id="cd-m">--</b><small>Mins</small></div>
+    <div><b id="cd-s">--</b><small>Secs</small></div>
+  </div>
+</header>
+
+<section id="teams">
+  <div class="sec-head">
+    <p class="eyebrow">The Contenders</p>
+    <h2>Teams</h2>
+  </div>
+  <div class="teams-grid">
+    <div class="team-card"><h3>Turbo Chargers</h3><p>Quick between the wickets, quicker with the bat.</p><p class="cap">Capt. TBC · 4 players</p></div>
+    <div class="team-card"><h3>Steel Hawks</h3><p>Sharp in the field, ruthless at the death.</p><p class="cap">Capt. TBC · 4 players</p></div>
+    <div class="team-card"><h3>Titan Blades</h3><p>Power hitters who clear the ropes early.</p><p class="cap">Capt. TBC · 4 players</p></div>
+    <div class="team-card"><h3>Lightning Legends</h3><p>Strike bowlers who love the new ball.</p><p class="cap">Capt. TBC · 4 players</p></div>
+    <div class="team-card"><h3>Thunderbolt</h3><p>All-rounders top to bottom.</p><p class="cap">Capt. TBC · 4 players</p></div>
+    <div class="team-card tbc"><h3>Team 6 — TBC</h3><p>Sixth team to be confirmed.</p><p class="cap">Capt. TBC · 4 players</p></div>
+  </div>
+</section>
+
+<section id="awards">
+  <div class="sec-head">
+    <p class="eyebrow">Silverware</p>
+    <h2>Trophies &amp; Awards</h2>
+  </div>
+  <div class="awards-grid">
+    <div class="award"><div class="icon">🏆</div><h3>Winners Trophy</h3><p>To the champions of the GSPL 2026 final.</p></div>
+    <div class="award"><div class="icon">🥈</div><h3>Runners-Up Trophy</h3><p>To the beaten finalists.</p></div>
+    <div class="award"><div class="icon">⭐</div><h3>MVP of the Tournament</h3><p>The most valuable all-round performer across all matches.</p></div>
+    <div class="award"><div class="icon">🏏</div><h3>Best Batsman</h3><p>Most runs across the tournament.</p></div>
+    <div class="award"><div class="icon">🎯</div><h3>Best Bowler</h3><p>Most wickets across the tournament.</p></div>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="sec-head">
+    <p class="eyebrow">Playing Conditions</p>
+    <h2>Tournament Rules</h2>
+  </div>
+  <div class="rules-grid">
+    <div class="rule"><h3>Format</h3><p>Single league of 6 teams — every team plays each other once (15 matches). Top two on the points table meet in the final.</p></div>
+    <div class="rule"><h3>Squads</h3><p>4 players per team. All players must be named at registration.</p></div>
+    <div class="rule"><h3>Innings length</h3><p>League matches: 4 overs per innings. The final: 5 overs per innings.</p></div>
+    <div class="rule"><h3>Bowling limits</h3><p>Maximum 2 overs per bowler. Every team therefore needs at least 2 bowlers in a league match and at least 3 in the final.</p></div>
+    <div class="rule"><h3>Points &amp; ties</h3><p>Win = 2 points, tie or no result = 1 point. Positions on equal points decided by Net Run Rate. A tied final goes to a Super Over.</p></div>
+    <div class="rule"><h3>Spirit of cricket</h3><p>Umpire's decision is final. Play hard, play fair — dissent or dangerous play leads to suspension at the organisers' discretion.</p></div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="sec-head">
+    <p class="eyebrow">Moments</p>
+    <h2>Gallery</h2>
+  </div>
+  <div class="gallery">
+    <div class="shot photo" style="--photo:url('photos/trophy.jpg')">Trophy on display</div>
+    <div class="shot">Team huddle</div>
+    <div class="shot">Big six</div>
+    <div class="shot">Stumps flying</div>
+    <div class="shot">Award ceremony</div>
+    <div class="shot">Squad photo</div>
+  </div>
+  <p class="gallery-note">To add a photo: put your image in a <code>photos</code> folder next to this file, then add <code>class="shot photo"</code> and <code>style="--photo:url('photos/your-image.jpg')"</code> to a tile — the first tile above is set up as an example. The caption text stays over the photo; change or delete it as you like.</p>
+</section>
+
+<footer id="contact">
+  <div class="foot-grid">
+    <div>
+      <h3>Venue</h3>
+      <p>Venue TBC<br>Add your ground name and address here.</p>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <ul>
+        <li>Tournament desk: <a href="tel:+10000000000">+1 (000) 000-0000</a></li>
+        <li>Email: <a href="mailto:organisers@gspl.example">organisers@gspl.example</a></li>
+        <li>WhatsApp updates group: <a href="#">join link</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Format at a Glance</h3>
+      <ul>
+        <li>6 teams · 4 players each</li>
+        <li>League: 15 matches, 4-over innings</li>
+        <li>Final: top 2, 5-over innings</li>
+        <li>Max 2 overs per bowler</li>
+      </ul>
+    </div>
+  </div>
+  <p class="copyright">© 2026 GSPL · Annual Cricket Tournament</p>
+</footer>
+
+<script>
+  // Countdown — EDIT THIS DATE to your tournament start
+  const startDate = new Date('2026-08-15T09:00:00');
+  function tick(){
+    const diff = startDate - new Date();
+    if (diff <= 0){ document.getElementById('countdown').innerHTML = '<div><b>PLAY</b><small>Underway!</small></div>'; return; }
+    const d = Math.floor(diff/86400000), h = Math.floor(diff/3600000)%24,
+          m = Math.floor(diff/60000)%60, s = Math.floor(diff/1000)%60;
+    cdD.textContent = d; cdH.textContent = String(h).padStart(2,'0');
+    cdM.textContent = String(m).padStart(2,'0'); cdS.textContent = String(s).padStart(2,'0');
+  }
+  const cdD=document.getElementById('cd-d'), cdH=document.getElementById('cd-h'),
+        cdM=document.getElementById('cd-m'), cdS=document.getElementById('cd-s');
+  tick(); setInterval(tick, 1000);
+
+</script>
+</body>
+</html>
