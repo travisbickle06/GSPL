@@ -112,7 +112,7 @@
  .gallery{display:grid;grid-template-columns:1fr;gap:1.2rem;justify-items:center}
   .shot{width:100%;max-width:1280px;aspect-ratio:1280/960;border-radius:var(--radius);display:flex;align-items:end;padding:.8rem;color:#fff;font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
     background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),var(--pitch);
-    background-size:cover;background-position:center}
+    background-size:contain; background-repeat: no-repeat; background-position:center}
   .shot.photo{background-image:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),var(--photo)!important}
   .shot:nth-child(2){background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),#2E5A96}
   .shot:nth-child(3){background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.55)),var(--cherry)}
